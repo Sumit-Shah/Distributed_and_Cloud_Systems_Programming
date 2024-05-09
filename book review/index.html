@@ -15,8 +15,8 @@ ss" rel="stylesheet"></head>
 <h1 id="mainTitle">My Movie Review App</h1>
 <div class="d-flex mb-2">
 <input type="text" class="form-control" id="bookName" placeholder="Book name">
-<!-- <input type="text" class="form-control" id="directorName" placeholder="Director name">
-<input type="text" class="form-control" id="releaseDate" placeholder="Release date"> -->
+<input type="text" class="form-control" id="directorName" placeholder="Director name">
+<input type="text" class="form-control" id="releaseDate" placeholder="Release date">
 <select class="form-control mx-2 w-25" id="bookRating">
 <option value="1">1/5</option>
 <option value="2">2/5</option>
@@ -66,7 +66,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 // Get a live data snapshot (i.e. auto-refresh) of our Reviews collection
-const q = query(collection(db, "Reviews"), orderBy("book_name"));
+const q = query(collection(db, "Reviews"), orderBy("book_name", "director_name", "release_date"));
 const unsubscribe = onSnapshot(q, (snapshot) => {
 // Empty HTML table
 $('#reviewList').empty();
@@ -75,7 +75,10 @@ var tableRows = '';
 snapshot.forEach((doc) => {
 tableRows += '<tr>';
 tableRows += '<td>' + doc.data().book_name + '</td>';
+tableRows += '<td>' + doc.data().director_name + '</td>';
+tableRows += '<td>' + doc.data().release_date + '</td>';
 tableRows += '<td>' + doc.data().book_rating + '/5</td>';
+
 tableRows += '</tr>';
 });
 $('#reviewList').append(tableRows);
@@ -87,10 +90,14 @@ $("#addButton").click(function() {
 // Add review to Firestore collection
 const docRef = addDoc(collection(db, "Reviews"), {
 book_name: $("#bookName").val(),
+director_name: $("#directorName").val(),
+release_date: $("#releaseDate").val(),
 book_rating: parseInt($("#bookRating").val())
 });
 // Reset form
 $("#bookName").val('');
+$("#directorName").val('');
+$("#releaseDate").val('');
 $("#bookRating").val('1');
 });
 </script>
